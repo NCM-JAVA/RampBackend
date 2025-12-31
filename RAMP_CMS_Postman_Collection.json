@@ -1,0 +1,600 @@
+{
+	"info": {
+		"_postman_id": "cms-ramp-2025",
+		"name": "RAMP CMS - Complete API Collection",
+		"description": "Complete Postman Collection for RAMP Content Management System\n\n**Default Credentials:**\n- Super Admin: superadmin / admin123\n\n**Usage:**\n1. Import this collection into Postman\n2. Set the baseUrl variable to your server (default: http://localhost:8080)\n3. Login with any role\n4. Token will be automatically saved and used in subsequent requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwtToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login - Super Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.collectionVariables.set('jwtToken', jsonData.data.token);",
+									"        console.log('Token saved:', jsonData.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"superadmin\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login as Super Admin (Default credentials)"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Custom User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.collectionVariables.set('jwtToken', jsonData.data.token);",
+									"        console.log('Token saved:', jsonData.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"your-username\",\n  \"password\": \"your-password\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with any user credentials"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Entrepreneur",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"enterpriseName\": \"Tech Innovations Pvt Ltd\",\n  \"authorizedPerson\": \"Rajesh Kumar\",\n  \"authorizedEmail\": \"rajesh@techinnovations.com\",\n  \"authorizedPAN\": \"ABCDE1234F\",\n  \"authorizedMobile\": \"9876543210\",\n  \"enterpriseActivity\": \"Software Development\",\n  \"enterpriseCity\": \"Bangalore\",\n  \"enterpriseAddress\": \"123 MG Road, Bangalore\",\n  \"loginUsername\": \"rajeshkumar\",\n  \"gstNumber\": \"29ABCDE1234F1Z5\",\n  \"udyamUapNumber\": \"UDYAM-KA-01-1234567\",\n  \"businessType\": \"Private Limited\",\n  \"role\": \"Entrepreneur\",\n  \"acceptTerms\": true,\n  \"password\": \"Rajesh@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new Entrepreneur (Public API)"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login and public registration"
+		},
+		{
+			"name": "Super Admin",
+			"item": [
+				{
+					"name": "Register Admin User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"John Admin\",\n  \"email\": \"john.admin@cms.com\",\n  \"mobileNumber\": \"9876543210\",\n  \"username\": \"johnadmin\",\n  \"password\": \"Admin@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/superadmin/register-admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"superadmin",
+								"register-admin"
+							]
+						},
+						"description": "Super Admin creates a new Admin user"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Content Manager",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Sarah Content Manager\",\n  \"email\": \"sarah.manager@cms.com\",\n  \"mobileNumber\": \"9876543212\",\n  \"username\": \"sarahmanager\",\n  \"password\": \"Manager@123\",\n  \"acceptTerms\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/superadmin/register-content-manager",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"superadmin",
+								"register-content-manager"
+							]
+						},
+						"description": "Super Admin creates a new Content Manager user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/superadmin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"superadmin",
+								"users"
+							]
+						},
+						"description": "Get all users in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users by Role - ADMIN",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/superadmin/users/role/ADMIN",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"superadmin",
+								"users",
+								"role",
+								"ADMIN"
+							]
+						},
+						"description": "Get all users with ADMIN role"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users by Role - CONTENT_MANAGER",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/superadmin/users/role/CONTENT_MANAGER",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"superadmin",
+								"users",
+								"role",
+								"CONTENT_MANAGER"
+							]
+						},
+						"description": "Get all users with CONTENT_MANAGER role"
+					},
+					"response": []
+				}
+			],
+			"description": "Super Admin operations - User management",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get Dashboard Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/dashboard/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"dashboard",
+								"stats"
+							]
+						},
+						"description": "Get content statistics (total, pending, approved, rejected)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pending Content",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/content/pending",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"content",
+								"pending"
+							]
+						},
+						"description": "Get all pending content awaiting approval"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Content",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/content/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"content",
+								"all"
+							]
+						},
+						"description": "Get all content (pending, approved, rejected)"
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Content",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/content/approve/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"content",
+								"approve",
+								"1"
+							]
+						},
+						"description": "Approve content by ID - makes it live on website"
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"contentId\": 1,\n  \"rejectionReason\": \"Images are not clear. Please upload high-quality images and resubmit.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/content/reject",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"content",
+								"reject"
+							]
+						},
+						"description": "Reject content with reason"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin operations - Content approval and dashboard",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Content Manager",
+			"item": [
+				{
+					"name": "Create Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Summer Sale 2025\",\n  \"description\": \"Get up to 50% off on all products! Limited time offer. Visit our store now.\",\n  \"posterUrl\": \"https://cdn.example.com/posters/summer-sale-2025.jpg\",\n  \"posterFilename\": \"summer-sale-2025.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/content",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"content"
+							]
+						},
+						"description": "Create new content (Status: PENDING)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Content",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/content/my-content",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"content",
+								"my-content"
+							]
+						},
+						"description": "Get all content created by logged-in Content Manager"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Content",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Summer Sale 2025\",\n  \"description\": \"Get up to 70% off on all products! Extended offer. Visit our store now.\",\n  \"posterUrl\": \"https://cdn.example.com/posters/summer-sale-updated.jpg\",\n  \"posterFilename\": \"summer-sale-updated.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/content/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"content",
+								"1"
+							]
+						},
+						"description": "Update own content (Only pending/rejected content can be updated)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Content",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/content/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"content",
+								"1"
+							]
+						},
+						"description": "Delete own content"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Content by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/content/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"content",
+								"1"
+							]
+						},
+						"description": "Get specific content by ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Content Manager operations - Create and manage content",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwtToken}}",
+						"type": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Public APIs",
+			"item": [
+				{
+					"name": "Get Approved Content (Public)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/content/public/approved",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"content",
+								"public",
+								"approved"
+							]
+						},
+						"description": "Get all approved content for public website (No authentication required)"
+					},
+					"response": []
+				}
+			],
+			"description": "Public APIs - No authentication required"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwtToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
