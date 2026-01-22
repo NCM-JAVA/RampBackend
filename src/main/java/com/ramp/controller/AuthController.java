@@ -35,15 +35,23 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
+    
     @PostMapping("/register")
-    public ResponseEntity<StatusResponse<UserResponse>> register(@Valid @RequestBody UserReq req) {
+    public ResponseEntity<StatusResponse<UserResponse>> register(
+            @RequestBody UserReq req) {   // ❌ removed @Valid
         StatusResponse<UserResponse> response = userService.registerUser(req);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
+ /*   @PostMapping("/register")
+    public ResponseEntity<StatusResponse<UserResponse>> register(@Valid @RequestBody UserReq req) {
+        StatusResponse<UserResponse> response = userService.registerUser(req);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    } */
+
     @PostMapping("/login")
     public ResponseEntity<StatusResponse<LoginResponse>> login(@Valid @RequestBody LoginReq req) {
-        StatusResponse<LoginResponse> response = userService.login(req.getUserName(), req.getPassword(), jwtUtil);
+        StatusResponse<LoginResponse> response = userService.login(req.getLogin(), req.getPassword(), jwtUtil);
         return ResponseEntity.ok(response);
     }
 

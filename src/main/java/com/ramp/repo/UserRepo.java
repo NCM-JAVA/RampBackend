@@ -11,13 +11,18 @@ import com.ramp.entity.Users;
 
 @Repository
 public interface UserRepo extends JpaRepository<Users, Long> {
-	Optional<Users> findByUserName(String userName);
 
-	boolean existsByUserName(String userName);
+    Optional<Users> findByUserName(String userName);
 
-	boolean existsByEmail(String email);
+    boolean existsByUserName(String userName);
 
-	List<Users> findByRole(RoleEntity role);
+    boolean existsByEmail(String email);
 
+    List<Users> findByRole(RoleEntity role);
+
+   
+    Optional<Users> findByUserNameIgnoreCaseOrEmailIgnoreCase(
+            String userName,
+            String email
+    );
 }
-

@@ -7,12 +7,12 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
 import lombok.*;
-
 @Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmploymentMatrix {
+
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "managerial", column = @Column(name = "apst_managerial")),
@@ -23,7 +23,7 @@ public class EmploymentMatrix {
         @AttributeOverride(name = "others", column = @Column(name = "apst_others"))
     })
     private EmploymentCount apst;
-    
+
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "managerial", column = @Column(name = "non_apst_managerial")),
@@ -34,8 +34,13 @@ public class EmploymentMatrix {
         @AttributeOverride(name = "others", column = @Column(name = "non_apst_others"))
     })
     private EmploymentCount nonApst;
-    
+
+    // ✅ NULL-SAFE total
     public Integer getTotalEmployees() {
-        return apst.getTotal() + nonApst.getTotal();
+        return safeTotal(apst) + safeTotal(nonApst);
+    }
+
+    private int safeTotal(EmploymentCount count) {
+        return count == null ? 0 : count.getTotal();
     }
 }

@@ -12,12 +12,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Entity
 @Table(name = "industrial_unit_registrations")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class IndustrialUnitRegistration {
 
     @Id

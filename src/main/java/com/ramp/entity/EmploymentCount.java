@@ -9,14 +9,17 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmploymentCount {
-    private Integer managerial = 0;
-    private Integer supervisory = 0;
-    private Integer skilled = 0;
-    private Integer semiSkilled = 0;
-    private Integer unskilled = 0;
-    private Integer others = 0;
+    private Integer managerial ;
+    private Integer supervisory;
+    private Integer skilled ;
+    private Integer semiSkilled;
+    private Integer unskilled ;
+    private Integer others ;
     
     public Integer getTotal() {
         return managerial + supervisory + skilled + semiSkilled + unskilled + others;
     }
 }
+
+
+

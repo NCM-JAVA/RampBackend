@@ -1,6 +1,7 @@
 package com.ramp.utils;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.FilterChain;
@@ -48,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 // Fix: single-role extraction
                 String role = jwtUtil.extractRole(jwt);
-                List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, authorities);

@@ -45,4 +45,10 @@ public class ContentCreateReq {
     public void setPosterFilename(String posterFilename) {
         this.posterFilename = posterFilename;
     }
+
+	public Object getLogin() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

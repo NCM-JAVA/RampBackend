@@ -1,38 +1,34 @@
 package com.ramp.req;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.Email;
 
 public class LoginReq {
-    @NotBlank
-    private String userName;
 
-    @NotBlank
+    @NotBlank(message = "Username or Email is required")
+    private String login;
+
+    @NotBlank(message = "Password is required")
     private String password;
 
-	public String getUserName() {
-		return userName;
-	}
+    public String getLogin() {
+        return login;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	@Override
-	public String toString() {
-		return "LoginReq [userName=" + userName + ", password=" + password + "]";
-	}
-
-    // getters and setters
-    
-    
+    @Override
+    public String toString() {
+        return "LoginReq [login=" + login + "]";
+        // ❌ never log password
+    }
 }
