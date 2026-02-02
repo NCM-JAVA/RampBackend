@@ -104,7 +104,7 @@ public class DistrictInvestigationCommitteeController {
 	        }
 
 
-	        
+	        //ANKIT GIT
 	        @PutMapping("/{id}/status")
 	        @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
 	        public void updateRegistrationStatus(
