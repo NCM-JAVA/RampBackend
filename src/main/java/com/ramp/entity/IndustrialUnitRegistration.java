@@ -26,6 +26,8 @@ public class IndustrialUnitRegistration {
     @Column(nullable = false)
     private String userId;
     
+    
+    
     // Step 1: Unit Details
     @Embedded
     @AttributeOverrides({
@@ -90,6 +92,8 @@ public class IndustrialUnitRegistration {
     
     private LocalDateTime updatedAt;
     private LocalDateTime submittedAt;
+    
+   
     
     @PrePersist
     protected void onCreate() {

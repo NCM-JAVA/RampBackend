@@ -2,6 +2,7 @@ package com.ramp.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -17,6 +18,9 @@ import com.ramp.res.DashboardStatsResponse;
 import com.ramp.res.StatusResponse;
 import com.ramp.service.ContentService;
 import com.ramp.service.IndustrialUnitRegistrationService;
+import com.ramp.service.RegistrationDashboardService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -72,7 +76,6 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    // ✅ YOUR INSERT API
     @PostMapping("/industrial-unit/register")
     public ResponseEntity<IndustrialUnitRegistration> registerIndustrialUnit(
             @RequestBody IndustrialUnitRegistration registration) {
@@ -86,4 +89,6 @@ public class AdminController {
                 .status(HttpStatus.CREATED)
                 .body(saved);
     }
+   
+
 }
