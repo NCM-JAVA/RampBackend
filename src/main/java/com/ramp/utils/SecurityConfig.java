@@ -50,25 +50,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    // 🔑 Security configuration
+    // 🔑 Security configuration (CORS handled by CorsFilter)
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.cors().disable()
+            .csrf().disable()
             .authorizeRequests()
+            .antMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight
             .antMatchers(
-                "/api/auth/register",
-                "/api/auth/login",
-                "/api/content/public/**",
+                "/api/auth/**",
+                "/api/admin/**",
+                "/api/superadmin/**",
+                "/api/content/**",
+                "/api/industrial-unit/**",
+                "/api/user/**",
                 "/v3/api-docs/**",
                 "/swagger-ui.html",
                 "/swagger-ui/**",
                 "/actuator/health",
                 "/actuator/info"
             ).permitAll()
-            .antMatchers("/api/superadmin/**").hasAuthority("SUPER_ADMIN")
-            .antMatchers("/api/admin/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN")
-            .antMatchers("/api/content/**").hasAnyAuthority("CONTENT_MANAGER", "ADMIN", "SUPER_ADMIN")
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

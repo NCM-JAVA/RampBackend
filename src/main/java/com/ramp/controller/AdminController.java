@@ -18,6 +18,7 @@ import com.ramp.res.StatusResponse;
 import com.ramp.service.ContentService;
 import com.ramp.service.IndustrialUnitRegistrationService;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")

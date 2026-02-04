@@ -1,14 +1,13 @@
-package com.ramp.entity;
+package com.ramp.req;
 
-import javax.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.*;
-
-@Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LegalRegistrations {
+public class LegalDetailsReq {
     private String udyamIemNo;
     private String gstNo;
     private String tradingLicenseNo;

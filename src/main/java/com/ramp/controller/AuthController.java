@@ -22,7 +22,7 @@ import com.ramp.res.UserResponse;
 import com.ramp.service.UserService;
 import com.ramp.utils.JwtUtil;
 import com.ramp.utils.StatusCode;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

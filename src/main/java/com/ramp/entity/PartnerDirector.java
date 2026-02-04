@@ -22,13 +22,16 @@ public class PartnerDirector {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @NotBlank
     private String name;
-    
+
     @NotBlank
     private String address;
-    
+
+    private String aadharDocPath;
+    private String panDocPath;
+
     @ManyToOne
     @JoinColumn(name = "registration_id")
     private IndustrialUnitRegistration registration;

@@ -13,7 +13,7 @@ import com.ramp.req.CMSRegistrationReq;
 import com.ramp.res.StatusResponse;
 import com.ramp.res.UserResponse;
 import com.ramp.service.UserService;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/superadmin")
 @PreAuthorize("hasAuthority('SUPER_ADMIN')")

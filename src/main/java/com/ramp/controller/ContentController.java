@@ -13,7 +13,7 @@ import com.ramp.req.ContentCreateReq;
 import com.ramp.res.ContentResponse;
 import com.ramp.res.StatusResponse;
 import com.ramp.service.ContentService;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/content")
 public class ContentController {

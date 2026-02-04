@@ -10,6 +10,7 @@ import com.ramp.enums.IndustryType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,7 +46,7 @@ public class IndustrialUnitRegistration {
     private ConstitutionType constitutionType;
     
     @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PartnerDirector> partnersDirectors;
+    private List<PartnerDirector> partnersDirectors = new ArrayList<>();
     
     // Step 3: Operational Plan
     private LocalDate commencementDate;
@@ -60,10 +61,10 @@ public class IndustrialUnitRegistration {
     private PowerRequirement powerRequirement;
     
     @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductionCapacity> productionCapacities;
-    
+    private List<ProductionCapacity> productionCapacities = new ArrayList<>();
+
     @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RawMaterial> rawMaterials;
+    private List<RawMaterial> rawMaterials = new ArrayList<>();
     
     // Step 4: Legal Details
     @Embedded
@@ -82,14 +83,21 @@ public class IndustrialUnitRegistration {
     private Declaration declaration;
     
     // Meta
+    private Integer currentStep = 0;
+
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status = ApplicationStatus.DRAFT;
-    
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
-    
+
     private LocalDateTime updatedAt;
     private LocalDateTime submittedAt;
+
+    // Review fields
+    private String rejectionReason;
+    private String reviewedBy;
+    private LocalDateTime reviewedAt;
     
     @PrePersist
     protected void onCreate() {

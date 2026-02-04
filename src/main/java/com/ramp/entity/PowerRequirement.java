@@ -8,15 +8,16 @@ import com.ramp.enums.PowerUnit;
 
 import lombok.*;
 
-@Embeddable 
+@Embeddable
 @Data
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
 public class PowerRequirement {
     private Double powerValue;
-    
+
     @Enumerated(EnumType.STRING)
     private PowerUnit unit;
-    
+
     private String loadSanctionCertificate;
+    private String loadSanctionCertificatePath;
 }

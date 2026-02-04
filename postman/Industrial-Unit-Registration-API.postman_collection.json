@@ -1,0 +1,675 @@
+{
+	"info": {
+		"_postman_id": "industrial-unit-registration-api",
+		"name": "Industrial Unit Registration API",
+		"description": "7-step Industrial Unit Registration form API for APIDIP 2025 with file upload support and admin approval workflow.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:9003",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "registrationId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login as Entrepreneur",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login\": \"entrepreneur@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('adminToken', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login\": \"admin@example.com\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "File Upload",
+			"item": [
+				{
+					"name": "Upload Document",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.filePath) {",
+									"    pm.collectionVariables.set('uploadedFilePath', jsonData.filePath);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/files/upload",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "files", "upload"]
+						},
+						"description": "Upload a document (PDF, JPG, JPEG, PNG). Max size: 10MB.\n\nReturns the file path to be used in registration request."
+					}
+				},
+				{
+					"name": "Download Document",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/files/:userId/:fileName",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "files", ":userId", ":fileName"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "user123"
+								},
+								{
+									"key": "fileName",
+									"value": "document.pdf"
+								}
+							]
+						},
+						"description": "Download a previously uploaded document."
+					}
+				}
+			]
+		},
+		{
+			"name": "Step-by-Step Registration",
+			"item": [
+				{
+					"name": "1. Create Draft",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.collectionVariables.set('registrationId', jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/draft",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "draft"]
+						},
+						"description": "Create an empty draft registration. Returns the registration ID to use for subsequent step updates."
+					}
+				},
+				{
+					"name": "2. Save Unit Details (Step 1)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"ABC Industries Pvt Ltd\",\n    \"location\": \"Industrial Area Phase-II\",\n    \"address\": {\n        \"addressLine\": \"Plot No. 45, Industrial Estate\",\n        \"po\": \"Naharlagun\",\n        \"district\": \"Papum Pare\",\n        \"state\": \"Arunachal Pradesh\"\n    },\n    \"phone\": \"9876543210\",\n    \"email\": \"abc.industries@example.com\",\n    \"officeAddress\": {\n        \"sameAsFactory\": true\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/unit-details",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "unit-details"]
+						},
+						"description": "Save Step 1: Unit Details including name, location, address, phone, email, and office address."
+					}
+				},
+				{
+					"name": "3. Save Constitution (Step 2)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"constitutionType\": \"PRIVATE_LIMITED\",\n    \"partnersDirectors\": [\n        {\n            \"name\": \"John Doe\",\n            \"address\": \"123 Main Street, Itanagar\",\n            \"aadharDocPath\": \"user123/aadhar_john.pdf\",\n            \"panDocPath\": \"user123/pan_john.pdf\"\n        },\n        {\n            \"name\": \"Jane Smith\",\n            \"address\": \"456 Park Avenue, Naharlagun\",\n            \"aadharDocPath\": \"user123/aadhar_jane.pdf\",\n            \"panDocPath\": \"user123/pan_jane.pdf\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/constitution",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "constitution"]
+						},
+						"description": "Save Step 2: Constitution type and partners/directors details."
+					}
+				},
+				{
+					"name": "4. Save Operational Plan (Step 3)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"commencementDate\": \"2025-06-01\",\n    \"industryType\": \"MANUFACTURING\",\n    \"activityType\": \"Production\",\n    \"productServiceName\": \"Steel Products\",\n    \"powerRequirement\": {\n        \"powerValue\": 100.0,\n        \"unit\": \"KW\",\n        \"loadSanctionCertificatePath\": \"user123/load_sanction.pdf\"\n    },\n    \"productionCapacities\": [\n        {\n            \"product\": \"Steel Bars\",\n            \"quantity\": 1000.0,\n            \"value\": 500000.0\n        },\n        {\n            \"product\": \"Steel Sheets\",\n            \"quantity\": 500.0,\n            \"value\": 300000.0\n        }\n    ],\n    \"rawMaterials\": [\n        {\n            \"materialName\": \"Iron Ore\"\n        },\n        {\n            \"materialName\": \"Coal\"\n        },\n        {\n            \"materialName\": \"Limestone\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/operational-plan",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "operational-plan"]
+						},
+						"description": "Save Step 3: Operational plan including commencement date, industry type, power requirements, production capacities, and raw materials."
+					}
+				},
+				{
+					"name": "5. Save Legal Details (Step 4)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"udyamIemNo\": \"UDYAM-AR-00-0000001\",\n    \"gstNo\": \"12AAAAA0000A1Z5\",\n    \"tradingLicenseNo\": \"TL-2025-001\",\n    \"factoryLicenseNo\": \"FL-2025-001\",\n    \"spcbConsent\": \"SPCB-2025-001\",\n    \"udyamIemDocPath\": \"user123/udyam.pdf\",\n    \"gstDocPath\": \"user123/gst.pdf\",\n    \"factoryLicenseDocPath\": \"user123/factory_license.pdf\",\n    \"pollutionBoardConsentDocPath\": \"user123/spcb_consent.pdf\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/legal-details",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "legal-details"]
+						},
+						"description": "Save Step 4: Legal registration details including Udyam, GST, Trading License, Factory License, and SPCB consent."
+					}
+				},
+				{
+					"name": "6. Save Financials (Step 5)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"land\": 1000000.0,\n    \"siteDevelopment\": 200000.0,\n    \"factoryBuilding\": 500000.0,\n    \"officeBuilding\": 150000.0,\n    \"plantMachinery\": 2000000.0,\n    \"electricalInstallation\": 100000.0,\n    \"preopExpenses\": 50000.0,\n    \"miscAssets\": 30000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/financials",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "financials"]
+						},
+						"description": "Save Step 5: Fixed Capital Investment details."
+					}
+				},
+				{
+					"name": "7. Save Employment (Step 6)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"apst\": {\n        \"managerial\": 2,\n        \"supervisory\": 5,\n        \"skilled\": 20,\n        \"semiSkilled\": 30,\n        \"unskilled\": 10,\n        \"others\": 3\n    },\n    \"nonApst\": {\n        \"managerial\": 1,\n        \"supervisory\": 3,\n        \"skilled\": 10,\n        \"semiSkilled\": 15,\n        \"unskilled\": 5,\n        \"others\": 2\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/employment",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "employment"]
+						},
+						"description": "Save Step 6: Employment matrix for APST and Non-APST categories."
+					}
+				},
+				{
+					"name": "8. Save Declaration (Step 7)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isDeclared\": true,\n    \"fullName\": \"John Doe\",\n    \"signatureFilePath\": \"user123/signature.png\",\n    \"sealFilePath\": \"user123/seal.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/declaration",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "declaration"]
+						},
+						"description": "Save Step 7: Declaration with signature and seal."
+					}
+				},
+				{
+					"name": "9. Submit Registration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/submit",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "submit"]
+						},
+						"description": "Submit the completed registration. Validates that all required steps are filled and declaration is accepted."
+					}
+				}
+			],
+			"description": "Step-by-step registration flow. Create a draft first, then save each step individually, and finally submit."
+		},
+		{
+			"name": "Registration (Legacy - Full Form)",
+			"description": "Legacy endpoint that submits all 7 steps at once. Use 'Step-by-Step Registration' folder for incremental saving.",
+			"item": [
+				{
+					"name": "Submit Registration (Full 7-Step Form)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.collectionVariables.set('registrationId', jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"unitDetails\": {\n        \"name\": \"ABC Industries Pvt Ltd\",\n        \"location\": \"Industrial Area Phase-II\",\n        \"address\": {\n            \"addressLine\": \"Plot No. 45, Industrial Estate\",\n            \"po\": \"Naharlagun\",\n            \"district\": \"Papum Pare\",\n            \"state\": \"Arunachal Pradesh\"\n        },\n        \"phone\": \"9876543210\",\n        \"email\": \"abc.industries@example.com\",\n        \"officeAddress\": {\n            \"sameAsFactory\": true\n        }\n    },\n    \"constitution\": {\n        \"constitutionType\": \"PRIVATE_LIMITED\",\n        \"partnersDirectors\": [\n            {\n                \"name\": \"John Doe\",\n                \"address\": \"123 Main Street, Itanagar\",\n                \"aadharDocPath\": \"user123/aadhar_john.pdf\",\n                \"panDocPath\": \"user123/pan_john.pdf\"\n            },\n            {\n                \"name\": \"Jane Smith\",\n                \"address\": \"456 Park Avenue, Naharlagun\",\n                \"aadharDocPath\": \"user123/aadhar_jane.pdf\",\n                \"panDocPath\": \"user123/pan_jane.pdf\"\n            }\n        ]\n    },\n    \"operationalPlan\": {\n        \"commencementDate\": \"2025-06-01\",\n        \"industryType\": \"MANUFACTURING\",\n        \"activityType\": \"Production\",\n        \"productServiceName\": \"Steel Products\",\n        \"powerRequirement\": {\n            \"powerValue\": 100.0,\n            \"unit\": \"KW\",\n            \"loadSanctionCertificatePath\": \"user123/load_sanction.pdf\"\n        },\n        \"productionCapacities\": [\n            {\n                \"product\": \"Steel Bars\",\n                \"quantity\": 1000.0,\n                \"value\": 500000.0\n            },\n            {\n                \"product\": \"Steel Sheets\",\n                \"quantity\": 500.0,\n                \"value\": 300000.0\n            }\n        ],\n        \"rawMaterials\": [\n            {\n                \"materialName\": \"Iron Ore\"\n            },\n            {\n                \"materialName\": \"Coal\"\n            },\n            {\n                \"materialName\": \"Limestone\"\n            }\n        ]\n    },\n    \"legalDetails\": {\n        \"udyamIemNo\": \"UDYAM-AR-00-0000001\",\n        \"gstNo\": \"12AAAAA0000A1Z5\",\n        \"tradingLicenseNo\": \"TL-2025-001\",\n        \"factoryLicenseNo\": \"FL-2025-001\",\n        \"spcbConsent\": \"SPCB-2025-001\",\n        \"udyamIemDocPath\": \"user123/udyam.pdf\",\n        \"gstDocPath\": \"user123/gst.pdf\",\n        \"factoryLicenseDocPath\": \"user123/factory_license.pdf\",\n        \"pollutionBoardConsentDocPath\": \"user123/spcb_consent.pdf\"\n    },\n    \"financials\": {\n        \"land\": 1000000.0,\n        \"siteDevelopment\": 200000.0,\n        \"factoryBuilding\": 500000.0,\n        \"officeBuilding\": 150000.0,\n        \"plantMachinery\": 2000000.0,\n        \"electricalInstallation\": 100000.0,\n        \"preopExpenses\": 50000.0,\n        \"miscAssets\": 30000.0\n    },\n    \"employment\": {\n        \"apst\": {\n            \"managerial\": 2,\n            \"supervisory\": 5,\n            \"skilled\": 20,\n            \"semiSkilled\": 30,\n            \"unskilled\": 10,\n            \"others\": 3\n        },\n        \"nonApst\": {\n            \"managerial\": 1,\n            \"supervisory\": 3,\n            \"skilled\": 10,\n            \"semiSkilled\": 15,\n            \"unskilled\": 5,\n            \"others\": 2\n        }\n    },\n    \"declaration\": {\n        \"isDeclared\": true,\n        \"fullName\": \"John Doe\",\n        \"signatureFilePath\": \"user123/signature.png\",\n        \"sealFilePath\": \"user123/seal.png\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "register"]
+						},
+						"description": "Legacy: Submit the complete 7-step Industrial Unit Registration form in one request.\n\nFor step-by-step saving, use the 'Step-by-Step Registration' folder instead.\n\n**Steps:**\n1. Unit Details\n2. Constitution (Partners/Directors)\n3. Operational Plan\n4. Legal Details\n5. Financials (Fixed Capital Investment)\n6. Employment (APST & Non-APST)\n7. Declaration"
+					}
+				},
+				{
+					"name": "Get My Registrations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/my-registrations",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "my-registrations"]
+						},
+						"description": "Get all registrations submitted by the logged-in entrepreneur."
+					}
+				},
+				{
+					"name": "Get Registration by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/{{registrationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "{{registrationId}}"]
+						},
+						"description": "Get detailed information about a specific registration."
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin Approval",
+			"item": [
+				{
+					"name": "Get All Registrations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/all",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "all"]
+						},
+						"description": "Get all registrations (Admin only)."
+					}
+				},
+				{
+					"name": "Get Registrations by Status - DRAFT",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/status/DRAFT",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "status", "DRAFT"]
+						},
+						"description": "Get all registrations with DRAFT status (incomplete step-by-step registrations)."
+					}
+				},
+				{
+					"name": "Get Registrations by Status - SUBMITTED",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/status/SUBMITTED",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "status", "SUBMITTED"]
+						},
+						"description": "Get all registrations with SUBMITTED status."
+					}
+				},
+				{
+					"name": "Get Registrations by Status - UNDER_REVIEW",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/status/UNDER_REVIEW",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "status", "UNDER_REVIEW"]
+						},
+						"description": "Get all registrations with UNDER_REVIEW status."
+					}
+				},
+				{
+					"name": "Get Registrations by Status - APPROVED",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/status/APPROVED",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "status", "APPROVED"]
+						},
+						"description": "Get all registrations with APPROVED status."
+					}
+				},
+				{
+					"name": "Get Registrations by Status - REJECTED",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/status/REJECTED",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "status", "REJECTED"]
+						},
+						"description": "Get all registrations with REJECTED status."
+					}
+				},
+				{
+					"name": "Mark Under Review",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/{{registrationId}}/under-review",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "{{registrationId}}", "under-review"]
+						},
+						"description": "Mark a registration as under review."
+					}
+				},
+				{
+					"name": "Approve Registration",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/{{registrationId}}/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "{{registrationId}}", "approve"]
+						},
+						"description": "Approve a registration."
+					}
+				},
+				{
+					"name": "Reject Registration",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/admin/{{registrationId}}/reject?reason=Documents are incomplete. Please upload valid Udyam certificate.",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "admin", "{{registrationId}}", "reject"],
+							"query": [
+								{
+									"key": "reason",
+									"value": "Documents are incomplete. Please upload valid Udyam certificate."
+								}
+							]
+						},
+						"description": "Reject a registration with a reason."
+					}
+				}
+			]
+		}
+	]
+}

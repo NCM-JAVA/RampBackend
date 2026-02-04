@@ -14,13 +14,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Declaration {
     private Boolean isDeclared = false;
-    
+
     @NotBlank
     private String fullName;
-    
+
     @Lob
     private String signature; // Base64 encoded
-    
+
     @Lob
     private String seal;
+
+    // File paths for uploaded documents
+    private String signatureFilePath;
+    private String sealFilePath;
 }
