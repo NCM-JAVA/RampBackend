@@ -27,6 +27,8 @@ public class IndustrialUnitRegistration {
     @Column(nullable = false)
     private String userId;
     
+    
+    
     // Step 1: Unit Details
     @Embedded
     @AttributeOverrides({
@@ -98,6 +100,8 @@ public class IndustrialUnitRegistration {
     private String rejectionReason;
     private String reviewedBy;
     private LocalDateTime reviewedAt;
+    
+   
     
     @PrePersist
     protected void onCreate() {
