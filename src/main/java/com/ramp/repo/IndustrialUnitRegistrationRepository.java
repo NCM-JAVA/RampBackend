@@ -15,4 +15,6 @@ public interface IndustrialUnitRegistrationRepository
     List<IndustrialUnitRegistration> findByStatusOrderByCreatedAtDesc(ApplicationStatus status);
 
     List<IndustrialUnitRegistration> findAllByOrderByCreatedAtDesc();
+
+    long countByStatus(ApplicationStatus status);
 }
