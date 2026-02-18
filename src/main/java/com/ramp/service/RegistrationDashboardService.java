@@ -48,7 +48,7 @@ public class RegistrationDashboardService {
     
     
     public Page<IndustrialUnitListDTO> getFilteredUnits(
-            Long unit,
+            String unit,
             String unitName,
             String unitLocation,
             ApplicationStatus status,
@@ -79,7 +79,7 @@ public class RegistrationDashboardService {
     
     
     public IndustrialUnitRegistration getSingleRegistration(
-            Long id,
+            String id,
             String unitName,
             String unitLocation,
             String gstNo,
@@ -97,7 +97,7 @@ public class RegistrationDashboardService {
 
     
     @Transactional
-    public void updateStatus(Long id, ApplicationStatus status) {
+    public void updateStatus(String id, ApplicationStatus status) {
 
         // Optional: validate state transition
         IndustrialUnitRegistration reg = repository.findById(id)

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class IndustrialUnitRegistrationResponse {
-    private Long id;
+    private String id;
     private String userId;
     private String unitName;
     private String unitLocation;

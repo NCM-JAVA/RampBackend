@@ -12,7 +12,7 @@ import com.ramp.enums.ApplicationStatus;
 public class IndustrialUnitSpecification {
 
     public static Specification<IndustrialUnitRegistration> withFilters(
-            Long unit,
+            String unit,
             String unitName,
             String unitLocation,
             ApplicationStatus status,
@@ -64,7 +64,7 @@ public class IndustrialUnitSpecification {
     }
     
     public static Specification<IndustrialUnitRegistration> forSingleRecord(
-            Long id,
+            String id,
             String unitName,
             String unitLocation,
             String gstNo,

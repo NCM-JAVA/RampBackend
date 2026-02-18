@@ -1,6 +1,7 @@
 package com.ramp.service;
 
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,16 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
 
     @Override
     public IndustrialUnitRegistrationResponse createDraft(String userId) {
+        boolean exists = repository.existsByUserId(userId);
+        if (exists) {
+            throw new IllegalArgumentException("You have already applied for unit registration. Only one registration per user is allowed.");
+        }
+
+        int currentYear = Year.now().getValue();
+        String customId = "APIDIP-" + userId + "-" + currentYear;
+
         IndustrialUnitRegistration entity = new IndustrialUnitRegistration();
+        entity.setId(customId);
         entity.setUserId(userId);
         entity.setStatus(ApplicationStatus.DRAFT);
         entity.setCurrentStep(0);
@@ -38,7 +48,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse saveUnitDetails(Long id, UnitDetailsReq request, String userId) {
+    public IndustrialUnitRegistrationResponse saveUnitDetails(String id, UnitDetailsReq request, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
         mapper.mapUnitDetailsToEntity(request, entity);
         entity.setCurrentStep(Math.max(entity.getCurrentStep(), 1));
@@ -48,7 +58,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse saveConstitution(Long id, ConstitutionReq request, String userId) {
+    public IndustrialUnitRegistrationResponse saveConstitution(String id, ConstitutionReq request, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
         mapper.mapConstitutionToEntity(request, entity);
         entity.setCurrentStep(Math.max(entity.getCurrentStep(), 2));
@@ -58,7 +68,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse saveOperationalPlan(Long id, OperationalPlanReq request, String userId) {
+    public IndustrialUnitRegistrationResponse saveOperationalPlan(String id, OperationalPlanReq request, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
         mapper.mapOperationalPlanToEntity(request, entity);
         entity.setCurrentStep(Math.max(entity.getCurrentStep(), 3));
@@ -68,7 +78,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse saveLegalDetails(Long id, LegalDetailsReq request, String userId) {
+    public IndustrialUnitRegistrationResponse saveLegalDetails(String id, LegalDetailsReq request, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
         mapper.mapLegalDetailsToEntity(request, entity);
         entity.setCurrentStep(Math.max(entity.getCurrentStep(), 4));
@@ -78,7 +88,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse saveFinancials(Long id, FixedCapitalInvestmentReq request, String userId) {
+    public IndustrialUnitRegistrationResponse saveFinancials(String id, FixedCapitalInvestmentReq request, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
         mapper.mapFinancialsToEntity(request, entity);
         entity.setCurrentStep(Math.max(entity.getCurrentStep(), 5));
@@ -88,7 +98,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse saveEmployment(Long id, EmploymentReq request, String userId) {
+    public IndustrialUnitRegistrationResponse saveEmployment(String id, EmploymentReq request, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
         mapper.mapEmploymentToEntity(request, entity);
         entity.setCurrentStep(Math.max(entity.getCurrentStep(), 6));
@@ -98,7 +108,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse saveDeclaration(Long id, DeclarationReq request, String userId) {
+    public IndustrialUnitRegistrationResponse saveDeclaration(String id, DeclarationReq request, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
         mapper.mapDeclarationToEntity(request, entity);
         entity.setCurrentStep(Math.max(entity.getCurrentStep(), 7));
@@ -108,7 +118,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse submitRegistration(Long id, String userId) {
+    public IndustrialUnitRegistrationResponse submitRegistration(String id, String userId) {
         IndustrialUnitRegistration entity = getAndValidateDraft(id, userId);
 
         // Validate required fields
@@ -132,7 +142,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
         return IndustrialUnitRegistrationResponse.fromEntityWithDetails(saved);
     }
 
-    private IndustrialUnitRegistration getAndValidateDraft(Long id, String userId) {
+    private IndustrialUnitRegistration getAndValidateDraft(String id, String userId) {
         IndustrialUnitRegistration entity = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Registration not found with id: " + id));
 
@@ -151,6 +161,12 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
 
     @Override
     public IndustrialUnitRegistrationResponse submitRegistration(IndustrialUnitRegistrationReq request, String userId) {
+        // Check if user already has a registration
+        boolean exists = repository.existsByUserId(userId);
+        if (exists) {
+            throw new IllegalArgumentException("You have already applied for unit registration. Only one registration per user is allowed.");
+        }
+
         // Validate declaration
         if (request.getDeclaration() == null || !Boolean.TRUE.equals(request.getDeclaration().getIsDeclared())) {
             throw new IllegalArgumentException("Declaration must be accepted to submit registration");
@@ -158,6 +174,10 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
 
         // Map DTO to entity
         IndustrialUnitRegistration entity = mapper.toEntity(request, userId);
+
+        // Set custom ID
+        int currentYear = Year.now().getValue();
+        entity.setId("APIDIP-" + userId + "-" + currentYear);
 
         // Set status to SUBMITTED
         entity.setStatus(ApplicationStatus.SUBMITTED);
@@ -177,7 +197,14 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse getRegistrationById(Long id, String userId) {
+    public IndustrialUnitRegistrationResponse getRegistrationByUserId(String userId) {
+        IndustrialUnitRegistration registration = repository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No registration found for user: " + userId));
+        return IndustrialUnitRegistrationResponse.fromEntityWithDetails(registration);
+    }
+
+    @Override
+    public IndustrialUnitRegistrationResponse getRegistrationById(String id, String userId) {
         IndustrialUnitRegistration registration = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Registration not found with id: " + id));
 
@@ -206,7 +233,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse approveRegistration(Long id, String reviewerId) {
+    public IndustrialUnitRegistrationResponse approveRegistration(String id, String reviewerId) {
         IndustrialUnitRegistration registration = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Registration not found with id: " + id));
 
@@ -220,7 +247,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse rejectRegistration(Long id, String reason, String reviewerId) {
+    public IndustrialUnitRegistrationResponse rejectRegistration(String id, String reason, String reviewerId) {
         IndustrialUnitRegistration registration = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Registration not found with id: " + id));
 
@@ -238,7 +265,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     }
 
     @Override
-    public IndustrialUnitRegistrationResponse markUnderReview(Long id, String reviewerId) {
+    public IndustrialUnitRegistrationResponse markUnderReview(String id, String reviewerId) {
         IndustrialUnitRegistration registration = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Registration not found with id: " + id));
 

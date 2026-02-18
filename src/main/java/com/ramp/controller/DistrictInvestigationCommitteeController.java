@@ -54,7 +54,7 @@ public class DistrictInvestigationCommitteeController {
 
 	        @GetMapping("/list")
 	        public Page<IndustrialUnitListDTO> getRegistrations(
-	                @RequestParam(required = false) Long unit,
+	                @RequestParam(required = false) String unit,
 	                @RequestParam(required = false) String unitName,
 	                @RequestParam(required = false) String unitLocation,
 	                @RequestParam(required = false) ApplicationStatus status,
@@ -91,7 +91,7 @@ public class DistrictInvestigationCommitteeController {
 	        
 	        @GetMapping("/detail")
 	        public IndustrialUnitRegistration getRegistrationDetail(
-	                @RequestParam Long id,
+	                @RequestParam String id,
 	                @RequestParam(required = false) String unitName,
 	                @RequestParam(required = false) String unitLocation,
 	                @RequestParam(required = false) String gstNo,
@@ -108,7 +108,7 @@ public class DistrictInvestigationCommitteeController {
 	        @PutMapping("/{id}/status")
 	        @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
 	        public void updateRegistrationStatus(
-	                @PathVariable Long id,
+	                @PathVariable String id,
 	                @RequestBody @Valid ApplicationStatusUpdateDTO request) {
 
 	            service.updateStatus(id, request.getStatus());

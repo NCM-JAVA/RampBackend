@@ -5,7 +5,10 @@
       "Bash(./mvnw.cmd spring-boot:run:*)",
       "Bash(./mvnw spring-boot:run:*)",
       "Bash(netstat:*)",
-      "Bash(mvn clean spring-boot:run:*)"
+      "Bash(mvn clean spring-boot:run:*)",
+      "Bash(PGPASSWORD=admin psql:*)",
+      "Bash(PGPASSWORD=admin \"/c/Program Files/PostgreSQL/14/bin/psql.exe\":*)",
+      "Bash(./mvnw compile:*)"
     ]
   }
 }

@@ -106,7 +106,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/register/{id}/step/unit-details")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveUnitDetails(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody UnitDetailsReq request,
             Principal principal) {
         try {
@@ -121,7 +121,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/register/{id}/step/constitution")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveConstitution(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody ConstitutionReq request,
             Principal principal) {
         try {
@@ -136,7 +136,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/register/{id}/step/operational-plan")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveOperationalPlan(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody OperationalPlanReq request,
             Principal principal) {
         try {
@@ -151,7 +151,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/register/{id}/step/legal-details")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveLegalDetails(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody LegalDetailsReq request,
             Principal principal) {
         try {
@@ -166,7 +166,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/register/{id}/step/financials")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveFinancials(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody FixedCapitalInvestmentReq request,
             Principal principal) {
         try {
@@ -181,7 +181,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/register/{id}/step/employment")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveEmployment(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody EmploymentReq request,
             Principal principal) {
         try {
@@ -196,7 +196,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/register/{id}/step/declaration")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveDeclaration(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody DeclarationReq request,
             Principal principal) {
         try {
@@ -211,7 +211,7 @@ public class IndustrialUnitRegistrationController {
     @PostMapping("/register/{id}/submit")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> submitRegistration(
-            @PathVariable Long id,
+            @PathVariable String id,
             Principal principal) {
         try {
             IndustrialUnitRegistrationResponse response =
@@ -238,6 +238,18 @@ public class IndustrialUnitRegistrationController {
         }
     }
 
+    @GetMapping("/my-registration")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<?> getMyRegistration(Principal principal) {
+        try {
+            IndustrialUnitRegistrationResponse response =
+                    service.getRegistrationByUserId(principal.getName());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/my-registrations")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<List<IndustrialUnitRegistrationResponse>> getMyRegistrations(Principal principal) {
@@ -249,7 +261,7 @@ public class IndustrialUnitRegistrationController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getRegistrationById(
-            @PathVariable Long id,
+            @PathVariable String id,
             Principal principal) {
         try {
             // If user is admin, pass null to skip ownership check
@@ -287,7 +299,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/admin/{id}/approve")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> approveRegistration(
-            @PathVariable Long id,
+            @PathVariable String id,
             Principal principal) {
         try {
             IndustrialUnitRegistrationResponse response =
@@ -301,7 +313,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/admin/{id}/reject")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> rejectRegistration(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam("reason") String reason,
             Principal principal) {
         try {
@@ -316,7 +328,7 @@ public class IndustrialUnitRegistrationController {
     @PutMapping("/admin/{id}/under-review")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> markUnderReview(
-            @PathVariable Long id,
+            @PathVariable String id,
             Principal principal) {
         try {
             IndustrialUnitRegistrationResponse response =

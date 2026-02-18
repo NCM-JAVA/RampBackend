@@ -12,7 +12,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class IndustrialUnitListDTO {
 
-    private Long unit;
+    private String unit;
     private String unitName;
     private String unitLocation;
     private ConstitutionType constitutionType;

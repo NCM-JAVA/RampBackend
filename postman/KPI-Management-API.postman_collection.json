@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "kpi-management-api",
+		"name": "KPI Management API",
+		"description": "KPI Management APIs with KPI Entry CRUD and District-wise Beneficiary Entry with state total.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:9003",
+			"type": "string"
+		},
+		{
+			"key": "kpiId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "KPI Entry",
+			"item": [
+				{
+					"name": "Create KPI Entry",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.collectionVariables.set('kpiId', jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"financialYear\": \"FY 2024-25\",\n    \"quarter\": \"Q1 (Apr-Jun)\",\n    \"intervention\": \"Skill Development\",\n    \"component\": \"Training Programs\",\n    \"kpi\": \"Number of beneficiaries trained\",\n    \"activity\": \"Conduct skill development workshops\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/kpi",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "kpi"]
+						},
+						"description": "Create a new KPI entry. All fields are required."
+					}
+				},
+				{
+					"name": "Get All KPI Entries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/kpi",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "kpi"]
+						},
+						"description": "Get all KPI entries ordered by creation date (newest first)."
+					}
+				},
+				{
+					"name": "Get KPI Entry by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/kpi/{{kpiId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "kpi", "{{kpiId}}"]
+						},
+						"description": "Get a single KPI entry by ID."
+					}
+				},
+				{
+					"name": "Update KPI Entry",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"financialYear\": \"FY 2024-25\",\n    \"quarter\": \"Q2 (Jul-Sep)\",\n    \"intervention\": \"Skill Development - Updated\",\n    \"component\": \"Advanced Training Programs\",\n    \"kpi\": \"Number of beneficiaries certified\",\n    \"activity\": \"Conduct advanced certification workshops\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/kpi/{{kpiId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "kpi", "{{kpiId}}"]
+						},
+						"description": "Update an existing KPI entry by ID."
+					}
+				},
+				{
+					"name": "Delete KPI Entry",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/kpi/{{kpiId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "kpi", "{{kpiId}}"]
+						},
+						"description": "Delete a KPI entry by ID."
+					}
+				}
+			],
+			"description": "CRUD operations for KPI entries."
+		},
+		{
+			"name": "District KPI Entry",
+			"item": [
+				{
+					"name": "Create District KPI Entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"districtName\": \"Papum Pare\",\n    \"sc\": 50,\n    \"st\": 120,\n    \"obc\": 80,\n    \"generalCategory\": 40,\n    \"women\": 90,\n    \"financialYear\": \"FY 2024-25\",\n    \"quarter\": \"Q1 (Apr-Jun)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/district-kpi",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "district-kpi"]
+						},
+						"description": "Create a district-wise beneficiary entry. The 'total' field is auto-calculated as: sc + st + obc + generalCategory + women."
+					}
+				},
+				{
+					"name": "Create District KPI Entry - District 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"districtName\": \"East Kameng\",\n    \"sc\": 30,\n    \"st\": 200,\n    \"obc\": 60,\n    \"generalCategory\": 25,\n    \"women\": 70,\n    \"financialYear\": \"FY 2024-25\",\n    \"quarter\": \"Q1 (Apr-Jun)\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/district-kpi",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "district-kpi"]
+						},
+						"description": "Create another district entry to test state totals."
+					}
+				},
+				{
+					"name": "Get All District KPI Entries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/district-kpi",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "district-kpi"]
+						},
+						"description": "Get all district-wise beneficiary entries ordered by district name."
+					}
+				},
+				{
+					"name": "Get State Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/district-kpi/state-total",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "district-kpi", "state-total"]
+						},
+						"description": "Get the sum of all districts' beneficiary counts. Returns totalSc, totalSt, totalObc, totalGeneralCategory, totalWomen, and grandTotal."
+					}
+				}
+			],
+			"description": "District-wise beneficiary entry APIs with auto-calculated totals and state-level aggregation."
+		}
+	]
+}

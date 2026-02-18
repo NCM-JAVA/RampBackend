@@ -13,7 +13,7 @@ import com.ramp.entity.IndustrialUnitRegistration;
 import com.ramp.enums.ApplicationStatus;
 
 public interface IndustrialUnitRegistrationRepository
-        extends JpaRepository<IndustrialUnitRegistration, Long> {
+        extends JpaRepository<IndustrialUnitRegistration, String> {
 
     List<IndustrialUnitRegistration> findByUserIdOrderByCreatedAtDesc(String userId);
 
@@ -29,7 +29,11 @@ public interface IndustrialUnitRegistrationRepository
 
 	@Modifying
 	@Query("UPDATE IndustrialUnitRegistration i SET i.status = :status WHERE i.id = :id")
-	int updateStatus(@Param("id") Long id, @Param("status") ApplicationStatus status);
+	int updateStatus(@Param("id") String id, @Param("status") ApplicationStatus status);
 
 	Optional<IndustrialUnitRegistration> findOne(Specification<IndustrialUnitRegistration> forSingleRecord);
+
+	boolean existsByUserId(String userId);
+
+	Optional<IndustrialUnitRegistration> findByUserId(String userId);
 }

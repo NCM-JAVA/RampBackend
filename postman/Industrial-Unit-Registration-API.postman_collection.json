@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "industrial-unit-registration-api",
 		"name": "Industrial Unit Registration API",
-		"description": "7-step Industrial Unit Registration form API for APIDIP 2025 with file upload support and admin approval workflow.",
+		"description": "7-step Industrial Unit Registration form API for APIDIP with file upload support and admin approval workflow.\n\nRegistration IDs are generated in the format: APIDIP-{userId}-{year} (e.g., APIDIP-1-2026, APIDIP-5-2026).\n\nOnly one registration per user is allowed.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -210,7 +210,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "industrial-unit", "register", "draft"]
 						},
-						"description": "Create an empty draft registration. Returns the registration ID to use for subsequent step updates."
+						"description": "Create an empty draft registration. Returns the registration ID in format APIDIP-{userId}-{year} (e.g., APIDIP-1-2026). Only one registration per user is allowed."
 					}
 				},
 				{
@@ -414,11 +414,85 @@
 					}
 				}
 			],
-			"description": "Step-by-step registration flow. Create a draft first, then save each step individually, and finally submit."
+			"description": "Step-by-step registration flow. Create a draft first, then save each step individually, and finally submit. Only one registration per user is allowed."
+		},
+		{
+			"name": "User Registration Queries",
+			"item": [
+				{
+					"name": "Get My Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.collectionVariables.set('registrationId', jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/my-registration",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "my-registration"]
+						},
+						"description": "Get the single unit registration for the logged-in user. Returns full details with ID in format APIDIP-{userId}-{year}. Returns 404 if no registration exists."
+					}
+				},
+				{
+					"name": "Get My Registrations (List)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/my-registrations",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "my-registrations"]
+						},
+						"description": "Get registrations for the logged-in user as a list."
+					}
+				},
+				{
+					"name": "Get Registration by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/industrial-unit/{{registrationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "industrial-unit", "{{registrationId}}"]
+						},
+						"description": "Get detailed information about a specific registration by ID (e.g., APIDIP-1-2026)."
+					}
+				}
+			],
+			"description": "Endpoints for users to query their registration. Only one registration per user is allowed."
 		},
 		{
 			"name": "Registration (Legacy - Full Form)",
-			"description": "Legacy endpoint that submits all 7 steps at once. Use 'Step-by-Step Registration' folder for incremental saving.",
+			"description": "Legacy endpoint that submits all 7 steps at once. Use 'Step-by-Step Registration' folder for incremental saving. Only one registration per user is allowed.",
 			"item": [
 				{
 					"name": "Submit Registration (Full 7-Step Form)",
@@ -458,42 +532,6 @@
 							"path": ["api", "industrial-unit", "register"]
 						},
 						"description": "Legacy: Submit the complete 7-step Industrial Unit Registration form in one request.\n\nFor step-by-step saving, use the 'Step-by-Step Registration' folder instead.\n\n**Steps:**\n1. Unit Details\n2. Constitution (Partners/Directors)\n3. Operational Plan\n4. Legal Details\n5. Financials (Fixed Capital Investment)\n6. Employment (APST & Non-APST)\n7. Declaration"
-					}
-				},
-				{
-					"name": "Get My Registrations",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/industrial-unit/my-registrations",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "industrial-unit", "my-registrations"]
-						},
-						"description": "Get all registrations submitted by the logged-in entrepreneur."
-					}
-				},
-				{
-					"name": "Get Registration by ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/industrial-unit/{{registrationId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "industrial-unit", "{{registrationId}}"]
-						},
-						"description": "Get detailed information about a specific registration."
 					}
 				}
 			]
@@ -670,6 +708,174 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "DIC (District Investigation Committee)",
+			"item": [
+				{
+					"name": "Get Overall Counts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/dic/registrations/count",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "dic", "registrations", "count"]
+						},
+						"description": "Get overall registration counts (total, pending, approved, rejected)."
+					}
+				},
+				{
+					"name": "Get Filtered Registrations List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/dic/registrations/list?page=0&size=10&sort=createdAt,desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "dic", "registrations", "list"],
+							"query": [
+								{
+									"key": "unit",
+									"value": "APIDIP-1-2026",
+									"description": "Filter by registration ID (format: APIDIP-userId-year)",
+									"disabled": true
+								},
+								{
+									"key": "unitName",
+									"value": "",
+									"description": "Filter by unit name (partial match)",
+									"disabled": true
+								},
+								{
+									"key": "unitLocation",
+									"value": "",
+									"description": "Filter by unit location (partial match)",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "SUBMITTED",
+									"description": "Filter by status: DRAFT, SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2026-01-01T00:00:00",
+									"description": "Filter from date (ISO format)",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2026-12-31T23:59:59",
+									"description": "Filter to date (ISO format)",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": "createdAt,desc"
+								}
+							]
+						},
+						"description": "Get paginated and filtered list of registrations. All filter params are optional."
+					}
+				},
+				{
+					"name": "Get Registration Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/dic/registrations/detail?id={{registrationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "dic", "registrations", "detail"],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{registrationId}}",
+									"description": "Registration ID (format: APIDIP-userId-year)"
+								},
+								{
+									"key": "unitName",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "unitLocation",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "gstNo",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "udyamIemNo",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get detailed registration by ID with optional filters."
+					}
+				},
+				{
+					"name": "Update Registration Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"APPROVED\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dic/registrations/{{registrationId}}/status",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "dic", "registrations", "{{registrationId}}", "status"]
+						},
+						"description": "Update registration status. Valid values: SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED."
+					}
+				}
+			],
+			"description": "District Investigation Committee endpoints for managing and reviewing registrations. Registration IDs use format: APIDIP-{userId}-{year}."
 		}
 	]
 }
