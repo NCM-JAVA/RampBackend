@@ -14,6 +14,7 @@ import com.ramp.repo.RoleRepository;
 import com.ramp.repo.UserRepo;
 import com.ramp.req.AdminRegistrationReq;
 import com.ramp.req.CMSRegistrationReq;
+import com.ramp.req.RegistrationReq;
 import com.ramp.req.UserReq;
 import com.ramp.res.LoginResponse;
 import com.ramp.res.StatusResponse;
@@ -69,6 +70,57 @@ public class UserServiceImpl implements UserService {
         Users savedUser = userRepository.save(user);
 
         UserResponse responseDto = userMapperr.toResponse(savedUser);
+
+        return new StatusResponse<>(
+                StatusCode.CREATED,
+                responseDto,
+                "User registered successfully"
+        );
+    }
+
+    // ================= REGISTER NEW USER (APIDIP 2025) =================
+    @Override
+    public StatusResponse<UserResponse> registerNewUser(RegistrationReq req) {
+
+        if (!req.getPassword().equals(req.getCnfPassword())) {
+            return new StatusResponse<>(StatusCode.BAD_REQUEST, null, "Password and confirm password do not match");
+        }
+
+        if (userRepository.existsByEmail(req.getEmail())) {
+            return new StatusResponse<>(StatusCode.CONFLICT, null, "Email already exists");
+        }
+
+        if (userRepository.existsByUserName(req.getEmail())) {
+            return new StatusResponse<>(StatusCode.CONFLICT, null, "Username already exists");
+        }
+
+        RoleEntity role = roleRepository.findByRoleName(RoleType.USER);
+        if (role == null) {
+            role = new RoleEntity();
+            role.setRoleName(RoleType.USER);
+            role = roleRepository.save(role);
+        }
+
+        Users user = new Users();
+        user.setEnterpriseName(req.getEnterpriseName());
+        user.setFullName(req.getName());
+        user.setEmail(req.getEmail());
+        user.setUserName(req.getEmail());
+        user.setMobileNumber(req.getContactNumber());
+        user.setPassword(passwordEncoder.encode(req.getPassword()));
+        user.setRole(role);
+        user.setCreatedDate(LocalDateTime.now());
+        user.setActive(true);
+        user.setStatus("ACTIVE");
+
+        Users savedUser = userRepository.save(user);
+
+        UserResponse responseDto = new UserResponse();
+        responseDto.setEnterpriseName(savedUser.getEnterpriseName());
+        responseDto.setAuthorizedPerson(savedUser.getFullName());
+        responseDto.setAuthorizedEmail(savedUser.getEmail());
+        responseDto.setAuthorizedMobile(savedUser.getMobileNumber());
+        responseDto.setRole(savedUser.getRole().getRoleName());
 
         return new StatusResponse<>(
                 StatusCode.CREATED,

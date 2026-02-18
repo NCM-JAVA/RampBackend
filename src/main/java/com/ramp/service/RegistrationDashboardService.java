@@ -61,18 +61,21 @@ public class RegistrationDashboardService {
                         unit, unitName, unitLocation, status, fromDate, toDate
                 );
 
-        return repository.findAll(spec, pageable)
-                .map(r -> new IndustrialUnitListDTO(
-                        r.getId(),
-                        r.getUnitDetails().getName(),
-                        r.getUnitDetails().getLocation(),
-                        r.getConstitutionType(),
-                        r.getLegalDetails() != null ? r.getLegalDetails().getGstNo() : null,
-                        r.getLegalDetails() != null ? r.getLegalDetails().getUdyamIemNo() : null,
-                        r.getCreatedAt(),
-                        r.getStatus()
-                ));
+//        return repository.findAll(spec, pageable)
+//                .map(r -> new IndustrialUnitListDTO(
+//                        r.getId(),
+//                        r.getUnitDetails().getName(),
+//                        r.getUnitDetails().getLocation(),
+//                        r.getConstitutionType(),
+//                        r.getLegalDetails() != null ? r.getLegalDetails().getGstNo() : null,
+//                        r.getLegalDetails() != null ? r.getLegalDetails().getUdyamIemNo() : null,
+//                        r.getCreatedAt(),
+//                        r.getStatus()
+//                ));
+        
+        return null;
     }
+    
     
     
     public IndustrialUnitRegistration getSingleRegistration(

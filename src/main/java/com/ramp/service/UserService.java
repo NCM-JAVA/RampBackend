@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import com.ramp.entity.Users;
 import com.ramp.req.AdminRegistrationReq;
 import com.ramp.req.CMSRegistrationReq;
+import com.ramp.req.RegistrationReq;
 import com.ramp.req.UserReq;
 import com.ramp.res.LoginResponse;
 import com.ramp.res.StatusResponse;
@@ -17,6 +18,7 @@ import com.ramp.utils.JwtUtil;
 
 public interface UserService {
     StatusResponse<UserResponse> registerUser(UserReq req);
+    StatusResponse<UserResponse> registerNewUser(RegistrationReq req);
     StatusResponse<UserResponse> registerCMS(CMSRegistrationReq req);
     StatusResponse<UserResponse> registerAdmin(AdminRegistrationReq req);
     StatusResponse<LoginResponse> login(String username, String password, JwtUtil jwtUtil);

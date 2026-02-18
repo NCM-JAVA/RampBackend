@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ramp.entity.Users;
 import com.ramp.req.LoginReq;
+import com.ramp.req.RegistrationReq;
 import com.ramp.req.UserReq;
 import com.ramp.res.LoginResponse;
 import com.ramp.res.StatusResponse;
@@ -35,19 +36,11 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-    
     @PostMapping("/register")
-    public ResponseEntity<StatusResponse<UserResponse>> register(
-            @RequestBody UserReq req) {   // ❌ removed @Valid
-        StatusResponse<UserResponse> response = userService.registerUser(req);
+    public ResponseEntity<StatusResponse<UserResponse>> register(@Valid @RequestBody RegistrationReq req) {
+        StatusResponse<UserResponse> response = userService.registerNewUser(req);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
-
- /*   @PostMapping("/register")
-    public ResponseEntity<StatusResponse<UserResponse>> register(@Valid @RequestBody UserReq req) {
-        StatusResponse<UserResponse> response = userService.registerUser(req);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    } */
 
     @PostMapping("/login")
     public ResponseEntity<StatusResponse<LoginResponse>> login(@Valid @RequestBody LoginReq req) {

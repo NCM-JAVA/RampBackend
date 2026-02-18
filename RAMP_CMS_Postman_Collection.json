@@ -51,7 +51,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userName\": \"superadmin\",\n  \"password\": \"admin123\"\n}"
+							"raw": "{\n  \"login\": \"superadmin\",\n  \"password\": \"admin123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/login",
@@ -100,7 +100,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userName\": \"your-username\",\n  \"password\": \"your-password\"\n}"
+							"raw": "{\n  \"login\": \"your-username-or-email\",\n  \"password\": \"your-password\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/login",
@@ -118,7 +118,7 @@
 					"response": []
 				},
 				{
-					"name": "Register Entrepreneur",
+					"name": "Register User (APIDIP 2025)",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -132,7 +132,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"enterpriseName\": \"Tech Innovations Pvt Ltd\",\n  \"authorizedPerson\": \"Rajesh Kumar\",\n  \"authorizedEmail\": \"rajesh@techinnovations.com\",\n  \"authorizedPAN\": \"ABCDE1234F\",\n  \"authorizedMobile\": \"9876543210\",\n  \"enterpriseActivity\": \"Software Development\",\n  \"enterpriseCity\": \"Bangalore\",\n  \"enterpriseAddress\": \"123 MG Road, Bangalore\",\n  \"loginUsername\": \"rajeshkumar\",\n  \"gstNumber\": \"29ABCDE1234F1Z5\",\n  \"udyamUapNumber\": \"UDYAM-KA-01-1234567\",\n  \"businessType\": \"Private Limited\",\n  \"role\": \"Entrepreneur\",\n  \"acceptTerms\": true,\n  \"password\": \"Rajesh@123\"\n}"
+							"raw": "{\n  \"enterprise_name\": \"Maniruddin Khan\",\n  \"name\": \"Maniruddin Khan\",\n  \"email\": \"kmaniruddin28@gmail.com\",\n  \"contact_number\": \"09732622145\",\n  \"password\": \"Test@1234\",\n  \"cnf_password\": \"Test@1234\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/register",
@@ -145,7 +145,7 @@
 								"register"
 							]
 						},
-						"description": "Register a new Entrepreneur (Public API)"
+						"description": "Register a new User for APIDIP 2025 (Public API). Role is automatically set to USER. Email is used as login username."
 					},
 					"response": []
 				}

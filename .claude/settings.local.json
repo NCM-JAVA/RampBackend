@@ -4,7 +4,8 @@
       "Bash(curl:*)",
       "Bash(./mvnw.cmd spring-boot:run:*)",
       "Bash(./mvnw spring-boot:run:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(mvn clean spring-boot:run:*)"
     ]
   }
 }
