@@ -30,7 +30,7 @@ public class SuperAdminController {
     	
     	System.out.println("req==>"+req);
         StatusResponse<UserResponse> response = userService.registerAdmin(req);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatusCode()).body(response); 
     }
 
     @PostMapping("/register-content-manager")
