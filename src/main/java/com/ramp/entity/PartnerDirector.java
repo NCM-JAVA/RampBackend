@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ public class PartnerDirector {
     private String aadharDocPath;
     private String panDocPath;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "registration_id")
     private IndustrialUnitRegistration registration;

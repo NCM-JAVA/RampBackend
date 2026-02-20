@@ -245,24 +245,52 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"constitutionType\": \"PRIVATE_LIMITED\",\n    \"partnersDirectors\": [\n        {\n            \"name\": \"John Doe\",\n            \"address\": \"123 Main Street, Itanagar\",\n            \"aadharDocPath\": \"user123/aadhar_john.pdf\",\n            \"panDocPath\": \"user123/pan_john.pdf\"\n        },\n        {\n            \"name\": \"Jane Smith\",\n            \"address\": \"456 Park Avenue, Naharlagun\",\n            \"aadharDocPath\": \"user123/aadhar_jane.pdf\",\n            \"panDocPath\": \"user123/pan_jane.pdf\"\n        }\n    ]\n}"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n    \"constitutionType\": \"PRIVATE_LIMITED\",\n    \"partnersDirectors\": [\n        {\n            \"name\": \"John Doe\",\n            \"address\": \"123 Main Street, Itanagar\"\n        },\n        {\n            \"name\": \"Jane Smith\",\n            \"address\": \"456 Park Avenue, Naharlagun\"\n        }\n    ]\n}",
+									"type": "text",
+									"contentType": "application/json",
+									"description": "JSON payload — constitutionType + partnersDirectors (name & address only; files sent separately)"
+								},
+								{
+									"key": "partnerAadharDocs",
+									"type": "file",
+									"src": "",
+									"description": "Aadhaar doc for partner index 0 (John Doe)"
+								},
+								{
+									"key": "partnerAadharDocs",
+									"type": "file",
+									"src": "",
+									"description": "Aadhaar doc for partner index 1 (Jane Smith)"
+								},
+								{
+									"key": "partnerPanDocs",
+									"type": "file",
+									"src": "",
+									"description": "PAN doc for partner index 0 (John Doe)"
+								},
+								{
+									"key": "partnerPanDocs",
+									"type": "file",
+									"src": "",
+									"description": "PAN doc for partner index 1 (Jane Smith)"
+								}
+							]
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/constitution",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "constitution"]
 						},
-						"description": "Save Step 2: Constitution type and partners/directors details."
+						"description": "Save Step 2: Constitution type and partners/directors details.\n\n**Multipart form-data request:**\n- `data` (text, application/json): JSON with constitutionType + partnersDirectors array (name & address)\n- `partnerAadharDocs` (file, repeatable): Aadhaar doc per partner — index order must match partnersDirectors array\n- `partnerPanDocs` (file, repeatable): PAN doc per partner — index order must match partnersDirectors array\n\nFiles are optional per partner. Add one file entry per partner in the same order as the JSON array."
 					}
 				},
 				{
@@ -297,24 +325,52 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"udyamIemNo\": \"UDYAM-AR-00-0000001\",\n    \"gstNo\": \"12AAAAA0000A1Z5\",\n    \"tradingLicenseNo\": \"TL-2025-001\",\n    \"factoryLicenseNo\": \"FL-2025-001\",\n    \"spcbConsent\": \"SPCB-2025-001\",\n    \"udyamIemDocPath\": \"user123/udyam.pdf\",\n    \"gstDocPath\": \"user123/gst.pdf\",\n    \"factoryLicenseDocPath\": \"user123/factory_license.pdf\",\n    \"pollutionBoardConsentDocPath\": \"user123/spcb_consent.pdf\"\n}"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n    \"udyamIemNo\": \"UDYAM-AR-00-0000001\",\n    \"gstNo\": \"12AAAAA0000A1Z5\",\n    \"tradingLicenseNo\": \"TL-2025-001\",\n    \"factoryLicenseNo\": \"FL-2025-001\",\n    \"spcbConsent\": \"SPCB-2025-001\",\n    \"otherRegistration\": \"\"\n}",
+									"type": "text",
+									"contentType": "application/json",
+									"description": "JSON payload — registration numbers (no doc path fields needed)"
+								},
+								{
+									"key": "udyamIemDoc",
+									"type": "file",
+									"src": "",
+									"description": "Udyam / IEM certificate (PDF/JPG/PNG, optional)"
+								},
+								{
+									"key": "gstDoc",
+									"type": "file",
+									"src": "",
+									"description": "GST certificate (PDF/JPG/PNG, optional)"
+								},
+								{
+									"key": "factoryLicenseDoc",
+									"type": "file",
+									"src": "",
+									"description": "Factory license document (PDF/JPG/PNG, optional)"
+								},
+								{
+									"key": "pollutionBoardConsentDoc",
+									"type": "file",
+									"src": "",
+									"description": "SPCB / Pollution board consent (PDF/JPG/PNG, optional)"
+								}
+							]
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/legal-details",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "legal-details"]
 						},
-						"description": "Save Step 4: Legal registration details including Udyam, GST, Trading License, Factory License, and SPCB consent."
+						"description": "Save Step 4: Legal registration details.\n\n**Multipart form-data request:**\n- `data` (text, application/json): JSON with udyamIemNo, gstNo, tradingLicenseNo, factoryLicenseNo, spcbConsent, otherRegistration\n- `udyamIemDoc` (file, optional): Udyam/IEM certificate binary\n- `gstDoc` (file, optional): GST certificate binary\n- `factoryLicenseDoc` (file, optional): Factory license binary\n- `pollutionBoardConsentDoc` (file, optional): SPCB consent binary\n\nAll file fields are optional. Doc paths are stored automatically server-side."
 					}
 				},
 				{
@@ -375,24 +431,40 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"isDeclared\": true,\n    \"fullName\": \"John Doe\",\n    \"signatureFilePath\": \"user123/signature.png\",\n    \"sealFilePath\": \"user123/seal.png\"\n}"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n    \"isDeclared\": true,\n    \"fullName\": \"John Doe\"\n}",
+									"type": "text",
+									"contentType": "application/json",
+									"description": "JSON payload — isDeclared (required, must be true) + fullName (required)"
+								},
+								{
+									"key": "signatureFile",
+									"type": "file",
+									"src": "",
+									"description": "Signature image binary (PNG/JPG, optional)"
+								},
+								{
+									"key": "sealFile",
+									"type": "file",
+									"src": "",
+									"description": "Official seal image binary (PNG/JPG, optional)"
+								}
+							]
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/declaration",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "declaration"]
 						},
-						"description": "Save Step 7: Declaration with signature and seal."
+						"description": "Save Step 7: Declaration with signature and seal.\n\n**Multipart form-data request:**\n- `data` (text, application/json): JSON with isDeclared (must be true) and fullName\n- `signatureFile` (file, optional): Signature image binary\n- `sealFile` (file, optional): Seal image binary\n\nFile paths are stored automatically server-side."
 					}
 				},
 				{

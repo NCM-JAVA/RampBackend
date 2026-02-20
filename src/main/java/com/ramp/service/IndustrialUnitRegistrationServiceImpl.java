@@ -28,10 +28,14 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
     // ========== STEP-BY-STEP REGISTRATION ==========
 
     @Override
-    public IndustrialUnitRegistrationResponse createDraft(String userId) {
-        boolean exists = repository.existsByUserId(userId);
-        if (exists) {
-            throw new IllegalArgumentException("You have already applied for unit registration. Only one registration per user is allowed.");
+    public List<IndustrialUnitRegistrationResponse> createDraft(String userId) {
+        List<IndustrialUnitRegistration> existingDrafts =
+                repository.findByUserIdAndStatusOrderByCreatedAtDesc(userId, ApplicationStatus.DRAFT);
+
+        if (!existingDrafts.isEmpty()) {
+            return existingDrafts.stream()
+                    .map(IndustrialUnitRegistrationResponse::fromEntityWithDetails)
+                    .collect(Collectors.toList());
         }
 
         int currentYear = Year.now().getValue();
@@ -44,7 +48,7 @@ public class IndustrialUnitRegistrationServiceImpl implements IndustrialUnitRegi
         entity.setCurrentStep(0);
 
         IndustrialUnitRegistration saved = repository.save(entity);
-        return IndustrialUnitRegistrationResponse.fromEntityWithDetails(saved);
+        return List.of(IndustrialUnitRegistrationResponse.fromEntityWithDetails(saved));
     }
 
     @Override
