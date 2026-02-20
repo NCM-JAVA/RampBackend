@@ -94,13 +94,9 @@ public class IndustrialUnitRegistrationController {
 
     @PostMapping("/register/draft")
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<?> createDraft(Principal principal) {
-        try {
-            IndustrialUnitRegistrationResponse response = service.createDraft(principal.getName());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<List<IndustrialUnitRegistrationResponse>> createDraft(Principal principal) {
+        List<IndustrialUnitRegistrationResponse> responses = service.createDraft(principal.getName());
+        return ResponseEntity.ok(responses);
     }
 
     @PutMapping("/register/{id}/step/unit-details")
@@ -118,13 +114,33 @@ public class IndustrialUnitRegistrationController {
         }
     }
 
-    @PutMapping("/register/{id}/step/constitution")
+    @PutMapping(value = "/register/{id}/step/constitution", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveConstitution(
             @PathVariable String id,
-            @Valid @RequestBody ConstitutionReq request,
+            @RequestPart("data") @Valid ConstitutionReq request,
+            @RequestParam(value = "partnerAadharDocs", required = false) List<MultipartFile> partnerAadharDocs,
+            @RequestParam(value = "partnerPanDocs", required = false) List<MultipartFile> partnerPanDocs,
             Principal principal) {
         try {
+            if (request.getPartnersDirectors() != null) {
+                for (int i = 0; i < request.getPartnersDirectors().size(); i++) {
+                    if (partnerAadharDocs != null && i < partnerAadharDocs.size()) {
+                        MultipartFile aadharDoc = partnerAadharDocs.get(i);
+                        if (aadharDoc != null && !aadharDoc.isEmpty()) {
+                            request.getPartnersDirectors().get(i).setAadharDocPath(
+                                    fileStorageService.storeFile(aadharDoc, principal.getName()));
+                        }
+                    }
+                    if (partnerPanDocs != null && i < partnerPanDocs.size()) {
+                        MultipartFile panDoc = partnerPanDocs.get(i);
+                        if (panDoc != null && !panDoc.isEmpty()) {
+                            request.getPartnersDirectors().get(i).setPanDocPath(
+                                    fileStorageService.storeFile(panDoc, principal.getName()));
+                        }
+                    }
+                }
+            }
             IndustrialUnitRegistrationResponse response =
                     service.saveConstitution(id, request, principal.getName());
             return ResponseEntity.ok(response);
@@ -148,13 +164,29 @@ public class IndustrialUnitRegistrationController {
         }
     }
 
-    @PutMapping("/register/{id}/step/legal-details")
+    @PutMapping(value = "/register/{id}/step/legal-details", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveLegalDetails(
             @PathVariable String id,
-            @Valid @RequestBody LegalDetailsReq request,
+            @RequestPart("data") @Valid LegalDetailsReq request,
+            @RequestParam(value = "udyamIemDoc", required = false) MultipartFile udyamIemDoc,
+            @RequestParam(value = "gstDoc", required = false) MultipartFile gstDoc,
+            @RequestParam(value = "factoryLicenseDoc", required = false) MultipartFile factoryLicenseDoc,
+            @RequestParam(value = "pollutionBoardConsentDoc", required = false) MultipartFile pollutionBoardConsentDoc,
             Principal principal) {
         try {
+            if (udyamIemDoc != null && !udyamIemDoc.isEmpty()) {
+                request.setUdyamIemDocPath(fileStorageService.storeFile(udyamIemDoc, principal.getName()));
+            }
+            if (gstDoc != null && !gstDoc.isEmpty()) {
+                request.setGstDocPath(fileStorageService.storeFile(gstDoc, principal.getName()));
+            }
+            if (factoryLicenseDoc != null && !factoryLicenseDoc.isEmpty()) {
+                request.setFactoryLicenseDocPath(fileStorageService.storeFile(factoryLicenseDoc, principal.getName()));
+            }
+            if (pollutionBoardConsentDoc != null && !pollutionBoardConsentDoc.isEmpty()) {
+                request.setPollutionBoardConsentDocPath(fileStorageService.storeFile(pollutionBoardConsentDoc, principal.getName()));
+            }
             IndustrialUnitRegistrationResponse response =
                     service.saveLegalDetails(id, request, principal.getName());
             return ResponseEntity.ok(response);
@@ -193,13 +225,21 @@ public class IndustrialUnitRegistrationController {
         }
     }
 
-    @PutMapping("/register/{id}/step/declaration")
+    @PutMapping(value = "/register/{id}/step/declaration", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveDeclaration(
             @PathVariable String id,
-            @Valid @RequestBody DeclarationReq request,
+            @RequestPart("data") @Valid DeclarationReq request,
+            @RequestParam(value = "signatureFile", required = false) MultipartFile signatureFile,
+            @RequestParam(value = "sealFile", required = false) MultipartFile sealFile,
             Principal principal) {
         try {
+            if (signatureFile != null && !signatureFile.isEmpty()) {
+                request.setSignatureFilePath(fileStorageService.storeFile(signatureFile, principal.getName()));
+            }
+            if (sealFile != null && !sealFile.isEmpty()) {
+                request.setSealFilePath(fileStorageService.storeFile(sealFile, principal.getName()));
+            }
             IndustrialUnitRegistrationResponse response =
                     service.saveDeclaration(id, request, principal.getName());
             return ResponseEntity.ok(response);

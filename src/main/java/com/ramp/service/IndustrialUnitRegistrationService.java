@@ -10,7 +10,7 @@ import com.ramp.res.IndustrialUnitRegistrationResponse;
 public interface IndustrialUnitRegistrationService {
 
     // Step-by-step registration
-    IndustrialUnitRegistrationResponse createDraft(String userId);
+    List<IndustrialUnitRegistrationResponse> createDraft(String userId);
 
     IndustrialUnitRegistrationResponse saveUnitDetails(String id, UnitDetailsReq request, String userId);
 

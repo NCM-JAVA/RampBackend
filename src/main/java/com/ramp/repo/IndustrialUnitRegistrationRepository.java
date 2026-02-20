@@ -36,4 +36,6 @@ public interface IndustrialUnitRegistrationRepository
 	boolean existsByUserId(String userId);
 
 	Optional<IndustrialUnitRegistration> findByUserId(String userId);
+
+	List<IndustrialUnitRegistration> findByUserIdAndStatusOrderByCreatedAtDesc(String userId, ApplicationStatus status);
 }
