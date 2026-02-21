@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ramp.enums.ApplicationStatus;
 import com.ramp.req.*;
 import com.ramp.res.IndustrialUnitRegistrationResponse;
@@ -113,42 +114,55 @@ public class IndustrialUnitRegistrationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    @PutMapping(value = "/register/{id}/step/constitution", 
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+@PreAuthorize("hasAuthority('USER')")
+public ResponseEntity<?> saveConstitution(
+        @PathVariable String id,
+        @RequestPart("data") String data,
+        @RequestParam(value = "partnerAadharDocs", required = false) List<MultipartFile> partnerAadharDocs,
+        @RequestParam(value = "partnerPanDocs", required = false) List<MultipartFile> partnerPanDocs,
+        Principal principal) {
 
-    @PutMapping(value = "/register/{id}/step/constitution", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<?> saveConstitution(
-            @PathVariable String id,
-            @RequestPart("data") @Valid ConstitutionReq request,
-            @RequestParam(value = "partnerAadharDocs", required = false) List<MultipartFile> partnerAadharDocs,
-            @RequestParam(value = "partnerPanDocs", required = false) List<MultipartFile> partnerPanDocs,
-            Principal principal) {
-        try {
-            if (request.getPartnersDirectors() != null) {
-                for (int i = 0; i < request.getPartnersDirectors().size(); i++) {
-                    if (partnerAadharDocs != null && i < partnerAadharDocs.size()) {
-                        MultipartFile aadharDoc = partnerAadharDocs.get(i);
-                        if (aadharDoc != null && !aadharDoc.isEmpty()) {
-                            request.getPartnersDirectors().get(i).setAadharDocPath(
-                                    fileStorageService.storeFile(aadharDoc, principal.getName()));
-                        }
+    try {
+
+        ObjectMapper mapper = new ObjectMapper();
+        ConstitutionReq request = mapper.readValue(data, ConstitutionReq.class);
+
+        if (request.getPartnersDirectors() != null) {
+            for (int i = 0; i < request.getPartnersDirectors().size(); i++) {
+
+                if (partnerAadharDocs != null && i < partnerAadharDocs.size()) {
+                    MultipartFile aadharDoc = partnerAadharDocs.get(i);
+                    if (aadharDoc != null && !aadharDoc.isEmpty()) {
+                        request.getPartnersDirectors().get(i)
+                                .setAadharDocPath(
+                                        fileStorageService.storeFile(aadharDoc, principal.getName()));
                     }
-                    if (partnerPanDocs != null && i < partnerPanDocs.size()) {
-                        MultipartFile panDoc = partnerPanDocs.get(i);
-                        if (panDoc != null && !panDoc.isEmpty()) {
-                            request.getPartnersDirectors().get(i).setPanDocPath(
-                                    fileStorageService.storeFile(panDoc, principal.getName()));
-                        }
+                }
+
+                if (partnerPanDocs != null && i < partnerPanDocs.size()) {
+                    MultipartFile panDoc = partnerPanDocs.get(i);
+                    if (panDoc != null && !panDoc.isEmpty()) {
+                        request.getPartnersDirectors().get(i)
+                                .setPanDocPath(
+                                        fileStorageService.storeFile(panDoc, principal.getName()));
                     }
                 }
             }
-            IndustrialUnitRegistrationResponse response =
-                    service.saveConstitution(id, request, principal.getName());
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
 
+        IndustrialUnitRegistrationResponse response =
+                service.saveConstitution(id, request, principal.getName());
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
+    
     @PutMapping("/register/{id}/step/operational-plan")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveOperationalPlan(

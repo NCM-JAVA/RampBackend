@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "kpis")
 @Data
@@ -20,5 +22,6 @@ public class Kpi {
 
     @ManyToOne
     @JoinColumn(name = "activity_no")
+    @JsonIgnore
     private Activity activity;
 }

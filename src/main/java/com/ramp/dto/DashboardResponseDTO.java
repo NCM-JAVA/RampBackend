@@ -13,7 +13,7 @@ public class DashboardResponseDTO {
     private Long msmesBenefited;
     private Long jobsSupported;
     private Long eventsConducted;
-
+    private SocialCompositionDTO socialComposition;
     private List<DistributionDTO> distribution;   // Pie chart
     private List<DistrictDTO> districtWiseData;   // Bar chart
 }
