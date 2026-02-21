@@ -1,7 +1,7 @@
 package com.ramp.enums;
 
 public enum RoleType  {
-	Entrepreneur,
+	ENTREPRENEUR,
     USER,
     MANAGER,
     SUPER_ADMIN,
