@@ -149,13 +149,21 @@ public class IndustrialUnitRegistrationController {
         }
     }
 
-    @PutMapping("/register/{id}/step/operational-plan")
+    @PutMapping(value = "/register/{id}/step/operational-plan", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> saveOperationalPlan(
             @PathVariable String id,
-            @Valid @RequestBody OperationalPlanReq request,
+            @RequestPart("data") @Valid OperationalPlanReq request,
+            @RequestParam(value = "loadSanctionCertificate", required = false) MultipartFile loadSanctionCertificate,
             Principal principal) {
         try {
+            if (loadSanctionCertificate != null && !loadSanctionCertificate.isEmpty()) {
+                if (request.getPowerRequirement() == null) {
+                    request.setPowerRequirement(new PowerRequirementReq());
+                }
+                request.getPowerRequirement().setLoadSanctionCertificatePath(
+                        fileStorageService.storeFile(loadSanctionCertificate, principal.getName()));
+            }
             IndustrialUnitRegistrationResponse response =
                     service.saveOperationalPlan(id, request, principal.getName());
             return ResponseEntity.ok(response);

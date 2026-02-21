@@ -299,24 +299,34 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"commencementDate\": \"2025-06-01\",\n    \"industryType\": \"MANUFACTURING\",\n    \"activityType\": \"Production\",\n    \"productServiceName\": \"Steel Products\",\n    \"powerRequirement\": {\n        \"powerValue\": 100.0,\n        \"unit\": \"KW\",\n        \"loadSanctionCertificatePath\": \"user123/load_sanction.pdf\"\n    },\n    \"productionCapacities\": [\n        {\n            \"product\": \"Steel Bars\",\n            \"quantity\": 1000.0,\n            \"value\": 500000.0\n        },\n        {\n            \"product\": \"Steel Sheets\",\n            \"quantity\": 500.0,\n            \"value\": 300000.0\n        }\n    ],\n    \"rawMaterials\": [\n        {\n            \"materialName\": \"Iron Ore\"\n        },\n        {\n            \"materialName\": \"Coal\"\n        },\n        {\n            \"materialName\": \"Limestone\"\n        }\n    ]\n}"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n    \"commencementDate\": \"2025-06-01\",\n    \"industryType\": \"MANUFACTURING\",\n    \"activityType\": \"Production\",\n    \"productServiceName\": \"Steel Products\",\n    \"powerRequirement\": {\n        \"powerValue\": 100.0,\n        \"unit\": \"KW\"\n    },\n    \"productionCapacities\": [\n        {\n            \"product\": \"Steel Bars\",\n            \"quantity\": 1000.0,\n            \"value\": 500000.0\n        },\n        {\n            \"product\": \"Steel Sheets\",\n            \"quantity\": 500.0,\n            \"value\": 300000.0\n        }\n    ],\n    \"rawMaterials\": [\n        {\n            \"materialName\": \"Iron Ore\"\n        },\n        {\n            \"materialName\": \"Coal\"\n        },\n        {\n            \"materialName\": \"Limestone\"\n        }\n    ]\n}",
+									"type": "text",
+									"contentType": "application/json",
+									"description": "JSON payload — commencementDate, industryType, activityType, productServiceName, powerRequirement (powerValue + unit), productionCapacities, rawMaterials"
+								},
+								{
+									"key": "loadSanctionCertificate",
+									"type": "file",
+									"src": "",
+									"description": "Load sanction certificate (PDF/JPG/PNG, optional)"
+								}
+							]
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/industrial-unit/register/{{registrationId}}/step/operational-plan",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "industrial-unit", "register", "{{registrationId}}", "step", "operational-plan"]
 						},
-						"description": "Save Step 3: Operational plan including commencement date, industry type, power requirements, production capacities, and raw materials."
+						"description": "Save Step 3: Operational plan including commencement date, industry type, power requirements, production capacities, and raw materials.\n\n**Multipart form-data request:**\n- `data` (text, application/json): JSON with commencementDate, industryType, activityType, productServiceName, powerRequirement (powerValue + unit only), productionCapacities array, rawMaterials array\n- `loadSanctionCertificate` (file, optional): Load sanction certificate binary (PDF/JPG/PNG)\n\nThe `loadSanctionCertificatePath` is stored automatically server-side when the file is uploaded."
 					}
 				},
 				{
